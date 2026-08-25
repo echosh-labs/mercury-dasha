@@ -1,0 +1,66 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: mercury-dasha
+  labels:
+    cloud.googleapis.com/location: us-central1
+    app.kubernetes.io/name: mercury-dasha
+    app.kubernetes.io/part-of: echosh-labs
+  annotations:
+    run.googleapis.com/launch-stage: BETA
+    run.googleapis.com/description: "mercury-dasha single-binary engine for echosh-labs"
+spec:
+  template:
+    metadata:
+      annotations:
+        # Crucial for BoltDB: 1 instance only prevents concurrent multi-writer lock conflicts
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "0"
+        # Second-generation execution environment supports volume mounts & full Linux syscalls
+        run.googleapis.com/execution-environment: gen2
+        # Serverless VPC Access connector to reach Cloud Filestore NFS (Replace with connector ID)
+        run.googleapis.com/vpc-access-connector: projects/PROJECT_ID/locations/us-central1/connectors/mercury-vpc-connector
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+    spec:
+      containerConcurrency: 250
+      serviceAccountName: mercury-dasha-sa@PROJECT_ID.iam.gserviceaccount.com
+      containers:
+        # Container Image (Google Artifact Registry)
+        - image: us-central1-docker.pkg.dev/PROJECT_ID/mercury-dasha/engine:latest
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+          env:
+            - name: PORT
+              value: "8080"
+            - name: BOLT_DB_PATH
+              value: "/var/data/mercury-dasha.db"
+            - name: SERVICE_NAME
+              value: "mercury-dasha"
+            - name: ENV
+              value: "production"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          volumeMounts:
+            - name: filestore-volume
+              mountPath: /var/data
+      volumes:
+        - name: filestore-volume
+          nfs:
+            server: 10.0.0.2 # Replace with Filestore Instance IP
+            path: /mercury_share
+            readOnly: false

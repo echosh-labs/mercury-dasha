@@ -1,34 +1,68 @@
-# Binaries
+# Binaries and build outputs
 mercury-dasha-server
 bin/
+dist/
 *.exe
+*.exe~
 *.dll
 *.so
 *.dylib
+*.test
+*.out
+*.tsbuildinfo
 
-# BoltDB / Local Database
-data/*.db
-data/*.db-*
+# Databases and local runtime data
+*.db
+*.db-*
+*.bolt
+.data/
+data/
 !data/.gitkeep
 
-# Node & Next.js
+# Dependencies
 node_modules/
-.next/
-out/
-*.tsbuildinfo
+vendor/
 .pnpm-store/
 archive/**/node_modules/
+
+# Next.js / Frontend builds
+frontend/.next/
+frontend/out/
+.next/
+out/
+.pnp
+.pnp.js
+
+# Go embed staging directory (only keep placeholder)
+backend/cmd/server/frontend_out/*
+!backend/cmd/server/frontend_out/.gitkeep
+!backend/cmd/server/frontend_out/index.html
 
 # Environment variables and Credentials
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.*.local
+*.env
 .service-account.json
 *.service-account.json
 *.key.json
 
-# IDE & OS
-.vscode/
-.idea/
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# OS / Editor files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

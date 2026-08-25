@@ -1,0 +1,21 @@
+services:
+  mercury-dasha:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: echosh-labs/mercury-dasha:latest
+    container_name: mercury-dasha
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - BOLT_DB_PATH=/var/data/mercury-dasha.db
+      - SERVICE_NAME=mercury-dasha
+      - ENV=development
+    volumes:
+      - mercury_data:/var/data
+    restart: unless-stopped
+
+volumes:
+  mercury_data:
+    name: mercury_dasha_data
