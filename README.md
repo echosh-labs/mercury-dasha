@@ -107,9 +107,25 @@ make deploy-cloudrun
 
 ---
 
-## 🗺️ Roadmap & Phase 2 Architecture (Parked To-Do)
+## 🗺️ Roadmap & Parked Architectural Decisions (TODO)
 
-### Dynamic "Thin Frontend Shell" & Managed Cloud Database Storehouse
+### 1. The Tale of Two Frontends: Unified Dossier vs. Dedicated Status App
+There are two distinct Next.js frontend codebases in the `echosh-labs` ecosystem:
+- **Frontend A (`echosh-labs.com`)**: The multi-route public compendium & dossier (`/`, `/compendium`, `/foundations`, `/axis-mundi`, `/martial-arts`, `/echosh`, `/archive`, `/services`, `/treasury`).
+- **Frontend B (`mercury-dasha/frontend`)**: The focused, single-page developer dashboard for planetary telemetry, Mahadasha cycles, and the BoltDB `MetaEditor`.
+
+#### Current Deployment Behavior:
+- When built via the ecosystem root deployment pipeline, `echosh-labs.com` static exports are compiled into `backend/cmd/server/frontend_out/` and embedded into the Go single-binary, serving the rich multi-route Dossier on Cloud Run.
+- When built via the standalone multi-stage `Dockerfile` inside `mercury-dasha`, it compiles and embeds the minimal telemetry dashboard from `mercury-dasha/frontend/`.
+
+#### Parked Decisions (To Be Selected):
+- [ ] **Option 1 (Unified Production Dossier)**: Keep `mercury-dasha` as the single-binary engine serving the full `echosh-labs.com` multi-route dossier, with the Go backend powering `/api/telemetry`, `/api/dasha/*`, and `/api/v1/meta/*`.
+- [ ] **Option 2 (Standalone Admin Engine)**: Deploy `mercury-dasha` exclusively with the minimal status dashboard and `MetaEditor` as an internal operational service.
+- [ ] **Option 3 (Route Embedding)**: Embed the minimal status dashboard and `MetaEditor` directly as a route (e.g. `/services` or `/status`) inside `echosh-labs.com`, reconciling both into a single unified frontend repository.
+
+---
+
+### 2. Dynamic "Thin Frontend Shell" & Managed Cloud Database Storehouse
 - [ ] **Pure Presentation Shell**: Decouple the frontend from embedded/static domain data. All astrological cycles, alchemical constants, and user/agent metadata will be served dynamically via the Go API with client-side caching (SWR / TanStack Query).
 - [ ] **Database Storehouse Migration**: Migrate from single-writer BoltDB (`maxScale: 1`) to a managed cloud database:
   - **Option A**: Cloud SQL (PostgreSQL) using connection pooling and `golang-migrate`.
