@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gcloudignore
+.agents
+.data
+bin
+dist
+tmp
+frontend/node_modules
+frontend/.next
+frontend/out
+backend/cmd/server/frontend_out/*
+!backend/cmd/server/frontend_out/.gitkeep
+*.db
+*.log

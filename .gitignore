@@ -1,7 +1,12 @@
 # Binaries and build outputs
 mercury-dasha-server
+server
+backend/server
 bin/
 dist/
+renders/
+*.mp4
+*.webm
 *.exe
 *.exe~
 *.dll

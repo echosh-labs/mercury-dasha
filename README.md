@@ -1,134 +1,149 @@
-# mercury-dasha (Mercury Stack)
-*Part of the **echosh-labs** ecosystem*
+# mercury-dasha (Mercury Sovereign Stack)
+*Single-Binary Sovereign Full-Stack Engine for [echosh-labs](https://echosh-labs.com)*
 
-`mercury-dasha` is a unified, single-binary application engine running on **Google Cloud Run (gen2)**. It merges:
-- **Next.js Frontend**: Static export (`output: 'export'`) compiled directly into the Go binary.
-- **Go Engine Backend**: Ultra-low-overhead HTTP multiplexer with REST/WebSocket capabilities.
-- **bbolt Embedded KV Store**: Sub-millisecond ACID JSON document store with zero external database dependencies.
-- **Persistent Volume Mount**: Cloud Filestore (NFS) via Serverless VPC Access for POSIX file locking (`flock`/`mmap`) with single-writer guarantees (`maxScale: 1`).
+`mercury-dasha` is an ultra-high-performance single-binary web service and astrological ephemeris engine running natively on sovereign local hardware (WSL2 Ubuntu) with deployment readiness for Google Cloud Run (gen2).
 
 ---
 
-## 🏛 Architecture
+## 🏛 6-Pillar Single-Binary Architecture
 
 ```
-+-------------------------------------------------------------+
-|                      Google Cloud Run                       |
-|                                                             |
-|  +---------------------+        +------------------------+  |
-|  |   Next.js Frontend  |        |    Go Engine Backend   |  |
-|  |   (Static Export)   | <----> |  (REST / WebSocket API)|  |
-|  +---------------------+        +------------------------+  |
-|                                              |              |
-|                                              v              |
-|                                    +---------------------+  |
-|                                    |  bbolt Storage DB   |  |
-|                                    |  (/var/data/app.db) |  |
-|                                    +---------------------+  |
-+----------------------------------------------|--------------+
-                                               v
-                             +-----------------------------------+
-                             |     Persistent NFS Filestore      |
-                             |  • POSIX file locking (flock)     |
-                             |  • Serverless VPC Access          |
-                             +-----------------------------------+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            mercury-dasha (Go 1.23)                          │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    Embedded Next.js 15 Frontend                       │  │
+│  │  [/] Observatory & Storehouse     [/alignment] Planetary Hours/Metals │  │
+│  │  [/characters] Sanctuary & Video  [/foundations] Storytelling Engine  │  │
+│  │  [/treasury] AMRA Sovereign Treasury & YouTube Studio Dock            │  │
+│  └──────────────────────────────────┬────────────────────────────────────┘  │
+│                                     │ (REST & SSE Stream)                   │
+│  ┌──────────────────────────────────▼────────────────────────────────────┐  │
+│  │                    High-Performance Go REST Engine                    │  │
+│  │  • Meeus Ephemeris Dasha Engine        • Chrono-Pulse SSE Metronome   │  │
+│  │  • Vedic Panchanga & Ayurveda          • Natal Lagna & Whole Bhavas   │  │
+│  │  • 9 Nava Grahas & Dignities           • Character Timeline Video DSP │  │
+│  │  • Hermetic Alchemy & Kybalion         • AMRA Billing & Audit Ledger  │  │
+│  │  • Local POSIX Dropbox Streamer        • Mission Control Diagnostics  │  │
+│  └──────────────────────────────────┬────────────────────────────────────┘  │
+│                                     │                                       │
+│  ┌──────────────────────────────────▼────────────────────────────────────┐  │
+│  │                    Embedded BoltDB Engine (bbolt)                     │  │
+│  │  • dasha_profiles (with characters)   • dasha_meta                    │  │
+│  │  • dropbox_index                      • dasha_events                  │  │
+│  │  • amra_ledger / amra_subscriptions   • dnd_sessions / audio_slices   │  │
+│  │  (ACID Persistent Store: 85,119 files indexed)                        │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────┬───────────────────────────────────────┘
+                                      │
+                 ┌────────────────────┴────────────────────┐
+                 ▼                                         ▼
+   ┌───────────────────────────┐             ┌───────────────────────────┐
+   │    Local Dropbox Engine   │             │   Dropbox Cloud API v2    │
+   │    /home/justin/Dropbox   │             │   (Permanent OAuth2)      │
+   │  • Official Linux Daemon  │             │ • Non-expiring refresh    │
+   │  • Zero API quota cost    │             │ • Remote backup target    │
+   │  • 85,119 files indexed   │             │ • 2.2 TB Pro Tier Quota   │
+   └───────────────────────────┘             └───────────────────────────┘
 ```
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## 🌟 Sovereign Engine Pillars & First-Class Routes
 
-### 1. Verify & Test
+### 1. Observatory & Storehouse Command (`/`)
+- Sidereal Moon astronomical computation using Meeus lunar anomaly orbital model with Lahiri Ayanamsha subtraction ($23.85^\circ$).
+- 27 Nakshatras & 108 Padas with Sanskrit names, deities, symbols, and sound syllables.
+- 120-Year Vimshottari Dasha 3-tier timeline (Mahadasha $\rightarrow$ Antardasha $\rightarrow$ Pratyantardasha) with elapsed cycle balance resolution.
+- High-throughput POSIX crawler indexing `/home/justin/Dropbox` (85,119 files: 35,009 books, 44,098 clean code files, 3,656 audio tracks, 1,430 video recordings, 926 text manuscripts).
+- Embedded AMR-NB DSP audio transcoder and HTTP 206 Range streaming.
+
+### 2. Daily Planetary Ephemeris (`/ephemeris`)
+- Dedicated, public-facing 24-hour non-linear planetary ephemeris chart.
+- Day Lord, solar anchors (Sunrise, True Solar Noon, Apparent Sunset, Solar Midnight), and 24 diurnal & nocturnal Chaldean hours.
+- Interactive hour cards with inline alchemical expansion (Sacred Metals, Hermetic Axioms, and Living Directives).
+- Standalone daily cosmic weather entry point requiring zero user profiles or registration.
+
+### 3. Planetary Alignment & Deep Inspection (`/alignment`)
+- Dedicated full-page route for granular astrological and alchemical analysis.
+- 4 strategic metric tiles (Day Lord, Solar Corrections LAST/EoT, Active Live Hora, Active Sub-Hora).
+- 7 Non-Linear Sub-Horas calculated via oblique ascension and topocentric Lagna arc traversal ($1\text{ Asu} = 4\text{s}$).
+- Guidance matrix: Favorable & Harmonic Endeavors vs. Cautionary & Dissonant Activities.
+- Topocentric Observer Calibration drawer with browser geolocation auto-detection and persistent centroid anchors.
+
+### 4. Unified Character Sanctuary (`/characters`)
+- Comprehensive character management replacing isolated profiles.
+- **Vedic Panchanga Matrix**: The 5 Cosmic Limbs calculated at birth—Vara (Solar Day), Tithi (Lunar Phase), Nakshatra (Mansion), Yoga (Luni-Solar Conjunction), and Karana (Half-Tithi).
+- **Ayurvedic Triad**: Primary Dosha (*Vata, Pitta, Kapha*), Gana temperament (*Deva, Manushya, Rakshasa*), Yoni totem animal, and Nadi pulse.
+- **Tripod of Embodiment & 12 Bhavas**: Sidereal Lagna (Ascendant), Surya, and Chandra with complete Whole Sign House Temple mappings.
+- **9 Classical Nava Grahas & Essential Dignities**: Exact coordinates and 7-tier dignity evaluator (*Param Ucha, Moolatrikona, Swakshetra, Mitra, Sama, Shatru, Neecha*).
+- **120-Year Master Timeline**: Enriched with sacred metals, Hermetic axioms, story archetypes, harmonic sound frequencies, and character age bounds.
+- **Direct Video Chronicle Bridge**: Auto-compiles video timeline manifests (`internal/timeline.GenerateFromCharacterDasha`) with 4 narrative scenes, resonant audio ducking (-14dB), and live telemetry HUD overlays.
+
+### 5. Foundations Storytelling Engine (`/foundations`)
+- Dynamic Foundations narrative seed generator binding active Dasha periods to character arcs, environmental friction, and sovereign questlines.
+
+### 6. AMRA Sovereign Treasury & Studio (`/treasury`)
+- **Vedic Philosophy of Āmra (आम्र)**: Anchored in the principle of sacred fruition (*karma-phala*) and the *Pūrṇa Kumbha* of eternal divine abundance.
+- **Immutable Financial Ledger**: BoltDB audit ledger (`BucketAmraLedger`) with SHA-256 idempotency deduplication.
+- **YouTube Sovereign Uploader**: Resumable chunked uploader with automated pipeline integration (`YouTubeUploadStep`).
+- **YouTube Analytics v2**: Real-time channel analytics (views, watch time, CPM, ad revenue) with graceful non-monetized channel handling.
+- **Unified Ecosystem Revenue**: Dynamic financial metrics synthesizing SaaS subscriptions with digital media accruals into sovereign treasury reserves.
+
+### 7. Chrono-Pulse SSE Metronome & Mission Control
+- 2-second real-time Server-Sent Events ticker (`/api/v1/stream/pulse`) delivering live hora, sacred metal, axiom, and Foundations narrative seed.
+- System diagnostics: RAM, Goroutines, DB pages, Uptime, and interactive live API catalog.
+- Bicameral Agent Brain reader and instruction synchronizer (`make sync`).
+
+---
+
+## 🚀 Commands & Development (Run in WSL2)
+
 ```bash
+# Harmonize bicameral brains and codebase substrates
+make sync
+
+# Run all Go unit & domain tests (14 packages)
+make test
+
+# Static analysis & typechecking
+make lint
+
+# Compile sovereign single binary (Next.js export + Go embed)
+make build
+
+# Run full unified verification suite (unit, lint, export, 18 smoke probes)
 make verify
-```
-Runs Go backend unit & API integration tests alongside Next.js production build checks.
 
-### 2. Run Backend Engine
-```bash
-make dev-backend
-```
-The Go engine will initialize a local test database at `.data/mercury-dasha-dev.db` and start serving on `http://localhost:8080`.
-
-### 3. Run Next.js Frontend
-```bash
-make dev-frontend
-```
-Next.js will start on `http://localhost:3000` and proxy API calls to port 8080.
-
-### 4. Run with Docker Compose (Full Stack Single-Binary)
-```bash
-make docker-run
-```
-Visits `http://localhost:8080` with volume persistence across container restarts.
-
----
-
-## 📡 API Reference
-
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/healthz` | `GET` | Service telemetry, Go runtime allocations, and storage stats |
-| `/api/telemetry` | `GET` | Live uptime, memory consumption (MB), GC cycles, and goroutine count |
-| `/api/dasha/overview` | `GET` | Planetary mahadasha cycles, frequencies, and correspondences |
-| `/api/dasha/nakshatras` | `GET` | Mercury-ruled nakshatras (Ashlesha, Jyeshtha, Revati) |
-| `/api/dasha/alchemy` | `GET` | Hermetic axioms and quicksilver correspondences |
-| `/api/v1/meta` | `GET` | List document keys with optional `?prefix=` search |
-| `/api/v1/meta/{key}` | `GET` | Retrieve raw JSON document |
-| `/api/v1/meta/{key}` | `POST/PUT` | Validate and atomically commit JSON document |
-| `/api/v1/meta/{key}` | `DELETE` | Remove document from `dasha_meta` bucket |
-| `/api/v1/backup` | `GET` | Download live binary snapshot of the Bolt database |
-
----
-
-## ☁️ Cloud Run Deployment & Artifact Registry
-
-Container images are published to **Google Artifact Registry** (`us-central1-docker.pkg.dev/${PROJECT_ID}/mercury-dasha/engine:latest`).
-
-### Step 1: Provision IAM Service Account
-```bash
-export GCP_PROJECT_ID="your-project-id"
-export GCP_REGION="us-central1"
-
-./deploy/setup-iam.sh
-```
-This creates `mercury-dasha-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com` with least-privilege roles (`logging.logWriter`, `monitoring.metricWriter`, `vpcaccess.user`).
-
-### Step 2: Provision Filestore & VPC Connector (Interim)
-```bash
-./deploy/setup-storage.sh
-```
-Note the output Filestore IP and update `deploy/service.yaml`.
-
-### Step 3: Deploy Service
-```bash
-make deploy-cloudrun
+# Launch sovereign stack locally
+make dev
 ```
 
 ---
 
-## 🗺️ Roadmap & Parked Architectural Decisions (TODO)
+## 🔑 Environment Configuration (`.env`)
 
-### 1. The Tale of Two Frontends: Unified Dossier vs. Dedicated Status App
-There are two distinct Next.js frontend codebases in the `echosh-labs` ecosystem:
-- **Frontend A (`echosh-labs.com`)**: The multi-route public compendium & dossier (`/`, `/compendium`, `/foundations`, `/axis-mundi`, `/martial-arts`, `/echosh`, `/archive`, `/services`, `/treasury`).
-- **Frontend B (`mercury-dasha/frontend`)**: The focused, single-page developer dashboard for planetary telemetry, Mahadasha cycles, and the BoltDB `MetaEditor`.
+```env
+PORT=8080
+ENV=development
+SERVICE_NAME=mercury-dasha
+BOLT_DB_PATH=.data/mercury-dasha-dev.db
 
-#### Current Deployment Behavior:
-- When built via the ecosystem root deployment pipeline, `echosh-labs.com` static exports are compiled into `backend/cmd/server/frontend_out/` and embedded into the Go single-binary, serving the rich multi-route Dossier on Cloud Run.
-- When built via the standalone multi-stage `Dockerfile` inside `mercury-dasha`, it compiles and embeds the minimal telemetry dashboard from `mercury-dasha/frontend/`.
+# Permanent Offline OAuth2 Refresh Token
+DROPBOX_APP_KEY=your-app-key
+DROPBOX_APP_SECRET=your-app-secret
+DROPBOX_REFRESH_TOKEN=your-refresh-token
+DROPBOX_BACKUP_PATH=/MercuryDasha/backups
 
-#### Parked Decisions (To Be Selected):
-- [ ] **Option 1 (Unified Production Dossier)**: Keep `mercury-dasha` as the single-binary engine serving the full `echosh-labs.com` multi-route dossier, with the Go backend powering `/api/telemetry`, `/api/dasha/*`, and `/api/v1/meta/*`.
-- [ ] **Option 2 (Standalone Admin Engine)**: Deploy `mercury-dasha` exclusively with the minimal status dashboard and `MetaEditor` as an internal operational service.
-- [ ] **Option 3 (Route Embedding)**: Embed the minimal status dashboard and `MetaEditor` directly as a route (e.g. `/services` or `/status`) inside `echosh-labs.com`, reconciling both into a single unified frontend repository.
+# Local POSIX Dropbox Root
+DROPBOX_LOCAL_PATH=/home/justin/Dropbox
+```
 
 ---
 
-### 2. Dynamic "Thin Frontend Shell" & Managed Cloud Database Storehouse
-- [ ] **Pure Presentation Shell**: Decouple the frontend from embedded/static domain data. All astrological cycles, alchemical constants, and user/agent metadata will be served dynamically via the Go API with client-side caching (SWR / TanStack Query).
-- [ ] **Database Storehouse Migration**: Migrate from single-writer BoltDB (`maxScale: 1`) to a managed cloud database:
-  - **Option A**: Cloud SQL (PostgreSQL) using connection pooling and `golang-migrate`.
-  - **Option B**: Cloud Firestore / Supabase for serverless document persistence.
-- [ ] **Cloud Run Auto-Scaling**: Lift the single-instance constraint to allow seamless horizontal scaling (`maxScale: 10+`) and multi-region deployment.
-- [ ] **Storage Bucket Integration**: Utilize Cloud Storage (GCS) buckets for binary backups and file uploads via signed URLs.
+## 🗺️ Ecosystem Bridges & Axis Mundi MCP
+
+`mercury-dasha` operates as the central ephemeris and media storehouse across the `echosh-labs` monorepo:
+1. **Axis Mundi Integration (`POST /mcp`)**: Streamable HTTP MCP server connecting Google Keep directives, Docs, Sheets, and Calendar events.
+2. **Gemini Voice Directives**: The `.agents/skills/axis-mundi-triage` pipeline ingests voice-captured directives into Mission Control.
+3. **Multi-Service Agentic Workflows**: Exposes Vimshottari calculations and the 85,119-document knowledge storehouse to sibling services (`axis-mundi`, `echosh`, `foundations`, `shaolin`).

@@ -1,10 +1,10 @@
 {
   "mercury-hot-reload": {
-    "enabled": true,
+    "enabled": false,
     "Stop": [
       {
         "type": "command",
-        "command": "bash ./scripts/post-agent-reload.sh",
+        "command": "echo '{}'",
         "timeout": 10
       }
     ]
