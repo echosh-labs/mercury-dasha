@@ -486,6 +486,12 @@ func (h *Handler) APICatalogHandler(w http.ResponseWriter, r *http.Request) {
 		{"GET", "/api/v1/media/stream", "Syncthing Vault", "Stream high-resolution media with byte-range HTTP 206 Partial Content seeking."},
 		{"GET", "/api/v1/media/thumbnail", "Syncthing Vault", "Serve generated video/photo poster thumbnail images."},
 
+		// Axis Mundi Workspace Ingestion Hub
+		{"GET", "/api/v1/axis-mundi/status", "Axis Mundi Hub", "Health status, connection mode, and statistics for Keep, Gmail, Docs, and Sheets monitoring."},
+		{"GET", "/api/v1/axis-mundi/feed", "Axis Mundi Hub", "Aggregated feed of observed Google Workspace items (Keep notes, Gmail threads, Docs, Sheets)."},
+		{"POST", "/api/v1/axis-mundi/sync", "Axis Mundi Hub", "Trigger immediate on-demand poll against Axis Mundi service."},
+		{"POST", "/api/v1/axis-mundi/events", "Axis Mundi Hub", "Ingest pushed workspace event and broadcast pulse alert."},
+
 		// YouTube Sovereign Video Uploader & Studio
 		{"GET", "/api/v1/youtube/status", "YouTube Studio", "OAuth2 account status, verified channel metadata, and estimated quota units."},
 		{"GET", "/api/v1/youtube/auth/url", "YouTube Studio", "Generate Google OAuth 2.0 authorization URL with offline consent."},

@@ -21,6 +21,7 @@ import (
 
 	"github.com/echosh-labs/mercury-dasha/internal/amr"
 	"github.com/echosh-labs/mercury-dasha/internal/amra"
+	"github.com/echosh-labs/mercury-dasha/internal/axismundi"
 	"github.com/echosh-labs/mercury-dasha/internal/chrono"
 	"github.com/echosh-labs/mercury-dasha/internal/config"
 	"github.com/echosh-labs/mercury-dasha/internal/dasha"
@@ -55,6 +56,7 @@ type Handler struct {
 	syncthing   *syncthing.Subsystem
 	syncthingH  *syncthing.HTTPHandler
 	grecorder   *grecorder.Service
+	axisMundi   *axismundi.Listener
 	selfHealing *selfhealing.Controller
 	restartMgr  *selfhealing.RestartManager
 	visualMu    sync.RWMutex
@@ -129,6 +131,9 @@ func NewHandler(cfg *config.Config, store db.StorageEngine, dropClients ...*drop
 		syncthingH:  syncthingH,
 	}
 
+	axisMundi := axismundi.NewListener(cfg.AxisMundiURL, cfg.AxisMundiAPIKey, store, metro)
+	h.axisMundi = axisMundi
+
 	restartMgr := selfhealing.NewRestartManager(store, cfg.RestartToken)
 	selfHealing := selfhealing.NewController(store, cfg, restartMgr)
 	h.restartMgr = restartMgr
@@ -152,6 +157,11 @@ func NewHandler(cfg *config.Config, store db.StorageEngine, dropClients ...*drop
 	metro.Start()
 
 	return h
+}
+
+// AxisMundi returns the active Axis Mundi workspace event listener.
+func (h *Handler) AxisMundi() *axismundi.Listener {
+	return h.axisMundi
 }
 
 // Syncthing returns the active Syncthing media synchronization subsystem.
@@ -182,6 +192,9 @@ func (h *Handler) Close() {
 	}
 	if h.syncthing != nil {
 		h.syncthing.Stop()
+	}
+	if h.axisMundi != nil {
+		h.axisMundi.Stop()
 	}
 }
 

@@ -261,6 +261,25 @@ func (m *Metronome) broadcastPulse() {
 	}
 }
 
+// BroadcastEvent broadcasts an arbitrary typed SSE event to all connected clients.
+func (m *Metronome) BroadcastEvent(eventType string, data any) {
+	bytesData, err := json.Marshal(data)
+	if err != nil {
+		return
+	}
+	msg := []byte(fmt.Sprintf("event: %s\ndata: %s\n\n", eventType, string(bytesData)))
+
+	m.clientsMu.RLock()
+	defer m.clientsMu.RUnlock()
+
+	for ch := range m.clients {
+		select {
+		case ch <- msg:
+		default:
+		}
+	}
+}
+
 func (m *Metronome) generatePulse(coords SolarCoordinates) PulseMessage {
 	now := time.Now().UTC()
 	var mem runtime.MemStats

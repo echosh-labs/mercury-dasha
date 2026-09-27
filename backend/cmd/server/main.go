@@ -95,6 +95,12 @@ func main() {
 		defer st.Stop()
 	}
 
+	// 2e. Start Axis Mundi Workspace Event Ingestion Subsystem
+	if am := handler.AxisMundi(); am != nil {
+		am.Start(20 * time.Second)
+		defer am.Stop()
+	}
+
 	// 3. Prepare Embedded Frontend FS
 	distFS, err := fs.Sub(frontendFS, "frontend_out")
 	if err != nil {

@@ -31,6 +31,8 @@ type Config struct {
 	SyncthingURL         string
 	SyncthingAPIKey      string
 	MediaLocalPath       string
+	AxisMundiURL         string
+	AxisMundiAPIKey      string
 }
 
 func loadEnvFile(paths ...string) {
@@ -144,6 +146,15 @@ func Load() *Config {
 		mediaLocalPath = "/home/justin/media"
 	}
 
+	axisMundiURL := os.Getenv("AXIS_MUNDI_URL")
+	if axisMundiURL == "" {
+		axisMundiURL = "http://127.0.0.1:8088"
+	}
+	axisMundiAPIKey := os.Getenv("AXIS_MUNDI_API_KEY")
+	if axisMundiAPIKey == "" {
+		axisMundiAPIKey = os.Getenv("MCP_API_KEY")
+	}
+
 	return &Config{
 		Port:                 port,
 		BoltDBPath:           dbPath,
@@ -167,5 +178,7 @@ func Load() *Config {
 		SyncthingURL:         syncthingURL,
 		SyncthingAPIKey:      syncthingAPIKey,
 		MediaLocalPath:       mediaLocalPath,
+		AxisMundiURL:         axisMundiURL,
+		AxisMundiAPIKey:      axisMundiAPIKey,
 	}
 }

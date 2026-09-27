@@ -143,6 +143,12 @@ func NewRouter(handler *Handler) *Router {
 	mux.HandleFunc("GET /api/v1/text/timeline", handler.TextTimelineHandler)
 	mux.HandleFunc("GET /api/v1/timeline/correspondence", handler.TimelineCorrespondenceHandler)
 
+	// Axis Mundi Workspace Ingestion & Feed Hub
+	mux.HandleFunc("GET /api/v1/axis-mundi/status", handler.AxisMundiStatusHandler)
+	mux.HandleFunc("GET /api/v1/axis-mundi/feed", handler.AxisMundiFeedHandler)
+	mux.HandleFunc("POST /api/v1/axis-mundi/sync", handler.AxisMundiSyncHandler)
+	mux.HandleFunc("POST /api/v1/axis-mundi/events", handler.AxisMundiEventHandler)
+
 	// Foundations Storytelling Synthesis & Video Manifest Bridge
 	mux.HandleFunc("POST /api/v1/foundations/seeds/from-text", handler.FoundationsSeedFromTextHandler)
 	mux.HandleFunc("GET /api/v1/foundations/seeds", handler.FoundationsListSeedsHandler)
