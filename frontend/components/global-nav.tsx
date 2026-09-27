@@ -22,7 +22,6 @@ import {
   Flame,
   Layers
 } from "lucide-react";
-import AxisMundiTriageDrawer from "./axis-mundi-triage-drawer";
 
 interface NavItem {
   name: string;
@@ -50,7 +49,6 @@ export default function GlobalNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [observatoryDropdown, setObservatoryDropdown] = useState<boolean>(false);
   const [studiosDropdown, setStudiosDropdown] = useState<boolean>(false);
-  const [triageDrawerOpen, setTriageDrawerOpen] = useState<boolean>(false);
   const [axisStatus, setAxisStatus] = useState<{ isLive: boolean; count: number }>({ isLive: false, count: 0 });
 
   // Close menus on route change
@@ -269,16 +267,19 @@ export default function GlobalNav() {
 
           {/* Right Status Utilities & Controls */}
           <div className="flex items-center space-x-2 sm:space-x-3 text-xs font-mono">
-            {/* Ambient Axis Mundi Inbound Triage Drawer Trigger */}
-            <button
-              onClick={() => setTriageDrawerOpen(true)}
-              title="Open Axis Mundi Inbound Triage Drawer"
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border transition group bg-slate-900 border-slate-800 hover:border-cyan-500/50 cursor-pointer"
+            {/* Direct Axis Mundi Engine Link (:8088) */}
+            <a
+              href="http://localhost:8088"
+              target="_blank"
+              rel="noreferrer"
+              title="Open Axis Mundi Engine on :8088"
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border transition group bg-slate-900 border-slate-800 hover:border-cyan-500/50 cursor-pointer text-slate-400 hover:text-cyan-300"
             >
               <Radio className={`w-3 h-3 ${axisStatus.isLive ? "text-emerald-400 animate-pulse" : "text-cyan-400"}`} />
-              <span className="hidden sm:inline text-slate-400 group-hover:text-slate-200">Axis Mundi:</span>
+              <span className="hidden sm:inline">Axis Mundi:</span>
               <span className="text-cyan-300 font-semibold">{axisStatus.count} items</span>
-            </button>
+              <ExternalLink className="w-2.5 h-2.5 text-slate-500 group-hover:text-cyan-400 transition" />
+            </a>
 
             {/* Runtime Target Pill */}
             <span className="hidden xl:inline-block px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 border border-slate-800">
@@ -420,23 +421,26 @@ export default function GlobalNav() {
               </Link>
             </div>
 
-            {/* 7. Axis Mundi Drawer */}
+            {/* 7. Axis Mundi Engine Link */}
             <div className="space-y-1 pt-2 border-t border-slate-800/80">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setTriageDrawerOpen(true);
-                }}
+              <a
+                href="http://localhost:8088"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono transition text-slate-300 hover:bg-slate-800 hover:text-white"
               >
                 <div className="flex items-center space-x-2">
                   <Radio className={`w-4 h-4 ${axisStatus.isLive ? "text-emerald-400 animate-pulse" : "text-cyan-400"}`} />
-                  <span>Axis Mundi Triage</span>
+                  <span>Axis Mundi Engine (:8088)</span>
                 </div>
-                <span className="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded-full font-semibold">
-                  {axisStatus.count} items
-                </span>
-              </button>
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded-full font-semibold">
+                    {axisStatus.count} items
+                  </span>
+                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                </div>
+              </a>
             </div>
 
             <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-400 px-2">
@@ -454,10 +458,6 @@ export default function GlobalNav() {
           </div>
         )}
       </header>
-      <AxisMundiTriageDrawer
-        isOpen={triageDrawerOpen}
-        onClose={() => setTriageDrawerOpen(false)}
-      />
     </>
   );
 }
