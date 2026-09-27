@@ -142,52 +142,50 @@ export default function EphemerisPage() {
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-screen bg-[#070b14] text-slate-100 font-sans pb-20 selection:bg-amber-500/30">
-      {/* Header */}
-      <header className="border-b border-slate-800/80 bg-[#0c1322]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/"
-              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition flex items-center space-x-1 text-xs font-mono"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Observatory</span>
-            </Link>
-            <div className="h-4 w-px bg-slate-800" />
-            <div className="flex items-center space-x-2">
-              <Sun className="w-5 h-5 text-amber-400" />
-              <h1 className="text-base font-bold text-white tracking-tight">
-                Daily Planetary Ephemeris
-              </h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950 border border-amber-800 text-amber-300">
-                24-HOUR CHART
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 text-xs font-mono">
-            <Link
-              href="/alignment/"
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-purple-300 transition flex items-center space-x-1"
-            >
-              <Compass className="w-3.5 h-3.5" />
-              <span>Deep Alignment</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
-            <Link
-              href="/characters/"
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition flex items-center space-x-1"
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>Characters</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
+    <div className="space-y-6">
+      {/* Route Sub-Header & Controls */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#0c1322]/90 border border-slate-800 shadow-xl flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <Link
+            href="/"
+            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition flex items-center space-x-1 text-xs font-mono"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Observatory</span>
+          </Link>
+          <div className="h-4 w-px bg-slate-800" />
+          <div className="flex items-center space-x-2">
+            <Sun className="w-5 h-5 text-amber-400" />
+            <h1 className="text-base font-bold text-white tracking-tight">
+              Daily Planetary Ephemeris
+            </h1>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950 border border-amber-800 text-amber-300">
+              24-HOUR CHART
+            </span>
           </div>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+        <div className="flex items-center space-x-3 text-xs font-mono">
+          <Link
+            href="/alignment/"
+            className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-purple-300 transition flex items-center space-x-1"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Deep Alignment</span>
+            <ChevronRight className="w-3 h-3" />
+          </Link>
+          <Link
+            href="/characters/"
+            className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition flex items-center space-x-1"
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Characters</span>
+            <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-6">
         {loading || !schedule ? (
           <div className="p-16 flex flex-col items-center justify-center space-y-3 text-slate-400 bg-slate-900/40 rounded-2xl border border-slate-800">
             <Clock className="w-8 h-8 animate-spin text-amber-400" />
@@ -429,7 +427,7 @@ export default function EphemerisPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 
   // ── Hour Card Renderer ──────────────────────────────────────────────────────

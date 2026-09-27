@@ -24,6 +24,8 @@ import AlchemicalLab from "@/components/alchemical-lab";
 import AgenticConsole from "@/components/agentic-console";
 import AudioStudio from "@/components/audio-studio";
 import UnifiedMediaPortal from "@/components/unified-media-portal";
+import AxisMundiWorkspace from "@/components/axis-mundi-workspace";
+import { Radio } from "lucide-react";
 
 interface TelemetryData {
   service: string;
@@ -35,8 +37,19 @@ interface TelemetryData {
 }
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"observatory" | "alchemy" | "dropbox" | "audio" | "media" | "console">("observatory");
+  const [activeTab, setActiveTab] = useState<"observatory" | "alchemy" | "dropbox" | "audio" | "media" | "axis-mundi" | "console">("observatory");
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null);
+
+  // Read URL query parameter for tab selection (e.g., /?tab=axis-mundi)
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (tabParam && ["observatory", "alchemy", "dropbox", "audio", "media", "axis-mundi", "console"].includes(tabParam)) {
+        setActiveTab(tabParam as any);
+      }
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -133,35 +146,17 @@ export default function Home() {
           <span>Visual Chronicle</span>
         </button>
 
-        <Link
-          href="/treasury/"
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-lg transition text-slate-400 hover:text-emerald-300 hover:bg-emerald-950/40 border border-transparent hover:border-emerald-500/30 group"
-          title="Open Dedicated AMRA Sovereign Treasury Route"
+        <button
+          onClick={() => setActiveTab("axis-mundi")}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg transition ${
+            activeTab === "axis-mundi"
+              ? "bg-slate-800 text-cyan-400 border border-slate-700 font-semibold"
+              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+          }`}
         >
-          <Coins className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
-          <span>AMRA Treasury &amp; Studio</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400/70 group-hover:text-emerald-300 transition" />
-        </Link>
-
-        <Link
-          href="/foundations/"
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-lg transition text-slate-400 hover:text-red-300 hover:bg-red-950/40 border border-transparent hover:border-red-500/30 group"
-          title="Open Dedicated Foundations Creator Studio Route"
-        >
-          <Video className="w-4 h-4 text-red-400 group-hover:scale-110 transition-transform" />
-          <span>Foundations Studio</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-red-400/70 group-hover:text-red-300 transition" />
-        </Link>
-
-        <Link
-          href="/studio/"
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-lg transition text-slate-400 hover:text-amber-300 hover:bg-amber-950/40 border border-transparent hover:border-amber-500/30 group"
-          title="Open AV Studio 1 Vocal Narration & Video Studio"
-        >
-          <Film className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-          <span>AV Studio 1</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-amber-400/70 group-hover:text-amber-300 transition" />
-        </Link>
+          <Radio className="w-4 h-4 text-cyan-400" />
+          <span>Axis Mundi Ingestion</span>
+        </button>
 
         <button
           onClick={() => setActiveTab("console")}
@@ -174,6 +169,16 @@ export default function Home() {
           <Terminal className="w-4 h-4 text-purple-400" />
           <span>Agentic Mission Control</span>
         </button>
+
+        <Link
+          href="/treasury/"
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-lg transition text-slate-400 hover:text-emerald-300 hover:bg-emerald-950/40 border border-transparent hover:border-emerald-500/30 group shrink-0"
+          title="Open Dedicated AMRA Sovereign Treasury Route"
+        >
+          <Coins className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+          <span>AMRA Treasury &amp; Studio</span>
+          <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400/70 group-hover:text-emerald-300 transition" />
+        </Link>
       </div>
 
       {/* Tab Contents */}
@@ -182,6 +187,7 @@ export default function Home() {
       {activeTab === "dropbox" && <DropboxSovereignStorehouse />}
       {activeTab === "audio" && <AudioStudio />}
       {activeTab === "media" && <UnifiedMediaPortal />}
+      {activeTab === "axis-mundi" && <AxisMundiWorkspace />}
       {activeTab === "console" && <AgenticConsole />}
     </div>
   );

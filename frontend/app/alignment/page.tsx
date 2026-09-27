@@ -278,79 +278,77 @@ export default function AlignmentPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#070b14] text-slate-100 font-sans pb-20 selection:bg-cyan-500/30">
-      {/* Top Banner Navigation */}
-      <header className="border-b border-slate-800/80 bg-[#0c1322]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/"
-              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition flex items-center space-x-1 text-xs font-mono"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Observatory</span>
-            </Link>
-            <div className="h-4 w-px bg-slate-800" />
-            <div className="flex items-center space-x-2">
-              <Compass className="w-5 h-5 text-cyan-400" />
-              <h1 className="text-base font-bold text-white tracking-tight">
-                Temporal Alignment &amp; Planetary Ephemeris
-              </h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300">
-                24-HOUR CHALDEAN CLOCK
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 text-xs font-mono">
-            {/* Character Profile Selector */}
-            <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-              <Users className="w-3.5 h-3.5 text-cyan-400" />
-              <select
-                value={activeProfileId}
-                onChange={(e) => {
-                  setActiveProfileId(e.target.value);
-                  if (typeof window !== "undefined") {
-                    localStorage.setItem("mercury_active_profile", e.target.value);
-                  }
-                }}
-                className="bg-transparent text-slate-200 focus:outline-none cursor-pointer"
-              >
-                <option value="">Sovereign Default (Observer)</option>
-                {profileList.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Quick Link to Characters */}
-            <Link
-              href="/characters/"
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition flex items-center space-x-1"
-            >
-              <span>Characters</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
-
-            {/* Topocentric Config Toggle */}
-            <button
-              onClick={() => setShowConfig(!showConfig)}
-              className={`px-3 py-1.5 rounded-lg border transition flex items-center space-x-1.5 ${
-                showConfig
-                  ? "bg-purple-950/80 border-purple-500 text-purple-300"
-                  : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white"
-              }`}
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>Observer Calibration</span>
-            </button>
+    <div className="space-y-6">
+      {/* Route Sub-Header & Controls */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#0c1322]/90 border border-slate-800 shadow-xl flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <Link
+            href="/"
+            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition flex items-center space-x-1 text-xs font-mono"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Observatory</span>
+          </Link>
+          <div className="h-4 w-px bg-slate-800" />
+          <div className="flex items-center space-x-2">
+            <Compass className="w-5 h-5 text-cyan-400" />
+            <h1 className="text-base font-bold text-white tracking-tight">
+              Temporal Alignment &amp; Planetary Ephemeris
+            </h1>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300">
+              24-HOUR CHALDEAN CLOCK
+            </span>
           </div>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+        <div className="flex items-center space-x-3 text-xs font-mono">
+          {/* Character Profile Selector */}
+          <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <select
+              value={activeProfileId}
+              onChange={(e) => {
+                setActiveProfileId(e.target.value);
+                if (typeof window !== "undefined") {
+                  localStorage.setItem("mercury_active_profile", e.target.value);
+                }
+              }}
+              className="bg-transparent text-slate-200 focus:outline-none cursor-pointer"
+            >
+              <option value="">Sovereign Default (Observer)</option>
+              {profileList.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Quick Link to Characters */}
+          <Link
+            href="/characters/"
+            className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-cyan-300 transition flex items-center space-x-1"
+          >
+            <span>Characters</span>
+            <ChevronRight className="w-3 h-3" />
+          </Link>
+
+          {/* Topocentric Config Toggle */}
+          <button
+            onClick={() => setShowConfig(!showConfig)}
+            className={`px-3 py-1.5 rounded-lg border transition flex items-center space-x-1.5 ${
+              showConfig
+                ? "bg-purple-950/80 border-purple-500 text-purple-300"
+                : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white"
+            }`}
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>Observer Calibration</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-6">
         {/* Topocentric Calibration Drawer (when opened) */}
         {showConfig && (
           <section className="p-5 rounded-2xl bg-gradient-to-br from-[#0c1322] to-[#111928] border border-purple-800/60 shadow-xl space-y-4 animate-in fade-in duration-200">
@@ -815,6 +813,6 @@ export default function AlignmentPage() {
           </>
         )}
       </div>
-    </main>
+    </div>
   );
 }
