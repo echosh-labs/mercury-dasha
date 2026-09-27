@@ -10,11 +10,9 @@ const frontendDir = path.resolve(__dirname, "..");
 const outDir = path.join(frontendDir, "out");
 
 describe("Mercury Dasha Frontend Suite", () => {
-  test("Static build bundle exists and contains index.html, 404.html & treasury route artifact", () => {
+  test("Static build bundle exists and contains index.html, 404.html & sovereign routes", () => {
     const indexPath = path.join(outDir, "index.html");
     const notFoundPath = path.join(outDir, "404.html");
-    const treasuryHtmlPath = path.join(outDir, "treasury.html");
-    const treasuryDirPath = path.join(outDir, "treasury", "index.html");
     const foundationsHtmlPath = path.join(outDir, "foundations.html");
     const foundationsDirPath = path.join(outDir, "foundations", "index.html");
     const ephemerisHtmlPath = path.join(outDir, "ephemeris.html");
@@ -32,10 +30,6 @@ describe("Mercury Dasha Frontend Suite", () => {
 
     assert.ok(fs.existsSync(indexPath), "out/index.html must exist after next build");
     assert.ok(fs.existsSync(notFoundPath), "out/404.html must exist after next build");
-    assert.ok(
-      fs.existsSync(treasuryHtmlPath) || fs.existsSync(treasuryDirPath),
-      "Dedicated treasury route static artifact (out/treasury.html or out/treasury/index.html) must exist"
-    );
     assert.ok(
       fs.existsSync(foundationsHtmlPath) || fs.existsSync(foundationsDirPath),
       "Dedicated foundations route static artifact (out/foundations.html or out/foundations/index.html) must exist"
@@ -98,7 +92,7 @@ describe("Mercury Dasha Frontend Suite", () => {
       "agentic-console.tsx",
       "audio-studio.tsx",
       "unified-audio-portal.tsx",
-      "amra-treasury-studio.tsx",
+      "treasury-toast-listener.tsx",
       "youtube-studio-dock.tsx"
     ];
 

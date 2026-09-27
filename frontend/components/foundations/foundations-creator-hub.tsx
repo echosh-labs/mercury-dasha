@@ -439,10 +439,12 @@ export default function FoundationsCreatorHub() {
               </div>
             </div>
             <a
-              href="/treasury/"
+              href="http://localhost:8050"
+              target="_blank"
+              rel="noreferrer"
               className="px-4 py-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white font-mono text-xs font-semibold flex items-center space-x-1.5 transition shadow"
             >
-              <span>View AMRA Treasury &amp; Ledger</span>
+              <span>Open AMRA Treasury Engine (:8050)</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </div>

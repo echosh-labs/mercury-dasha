@@ -13,6 +13,7 @@ import { ToastProvider } from "@/lib/toast-context";
 import { TemporalProvider } from "@/lib/temporal-context";
 import YouTubeStudioDock from "@/components/youtube-studio-dock";
 import AxisMundiToastListener from "@/components/axis-mundi-toast-listener";
+import TreasuryToastListener from "@/components/treasury-toast-listener";
 import { Toaster } from "sonner";
 
 export default function RootLayout({
@@ -33,6 +34,7 @@ export default function RootLayout({
             <YouTubeStudioDock />
             <GlobalFooter />
             <AxisMundiToastListener />
+            <TreasuryToastListener />
             <Toaster
               position="bottom-right"
               theme="dark"

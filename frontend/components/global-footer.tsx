@@ -125,9 +125,11 @@ export default function GlobalFooter() {
               </div>
             </Link>
 
-            {/* 2. Dedicated AMRA Treasury Route */}
-            <Link
-              href="/treasury/"
+            {/* 2. AMRA Treasury Sovereign Engine */}
+            <a
+              href="http://localhost:8050"
+              target="_blank"
+              rel="noreferrer"
               className="p-3.5 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-emerald-500/20 hover:border-emerald-500/50 transition flex items-start space-x-3 group shadow-sm shadow-emerald-950/20"
             >
               <div className="p-2 rounded-lg bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 group-hover:scale-105 transition-transform shrink-0">
@@ -139,8 +141,8 @@ export default function GlobalFooter() {
                     <span className="font-semibold text-slate-200 group-hover:text-emerald-300 transition text-xs">
                       AMRA Sovereign Treasury
                     </span>
-                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1 py-0.2 rounded">
-                      ROUTE
+                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1 py-0.2 rounded font-mono">
+                      :8050
                     </span>
                   </div>
                   <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -149,7 +151,7 @@ export default function GlobalFooter() {
                   Immutable BoltDB ledger, Google Cloud billing, and alchemical shadow transmutation.
                 </p>
               </div>
-            </Link>
+            </a>
 
             {/* 3. Dedicated Foundations Studio Route */}
             <Link

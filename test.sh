@@ -313,9 +313,19 @@ else
     exit 1
   fi
 
-  # Test 13: Embedded Frontend Dedicated Treasury Route
-  echo -n "  • [GET] /treasury/ (Next.js dedicated route): "
-  if curl -s -I --connect-timeout 2 --max-time 3 "${TARGET_URL}/treasury/" | grep -q '200 OK'; then
+  # Test 13: Embedded Frontend Dedicated Alchemy Route
+  echo -n "  • [GET] /alchemy/ (Next.js dedicated route): "
+  if curl -s -I --connect-timeout 2 --max-time 3 "${TARGET_URL}/alchemy/" | grep -q '200 OK'; then
+    echo -e "${GREEN}PASS${NC}"
+  else
+    echo -e "${RED}FAIL${NC}"
+    cleanup_smoke
+    exit 1
+  fi
+
+  # Test 13b: Treasury Sovereign Status Endpoint
+  echo -n "  • [GET] /api/v1/treasury/status: "
+  if curl -s -I --connect-timeout 2 --max-time 3 "${TARGET_URL}/api/v1/treasury/status" | grep -q '200 OK'; then
     echo -e "${GREEN}PASS${NC}"
   else
     echo -e "${RED}FAIL${NC}"

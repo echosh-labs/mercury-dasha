@@ -179,7 +179,7 @@ func NewRouter(handler *Handler) *Router {
 	mux.HandleFunc("GET /api/v1/youtube/finance", handler.YouTubeFinanceHandler)
 	mux.HandleFunc("POST /api/v1/youtube/finance/sync-amra", handler.YouTubeSyncAmraHandler)
 
-	// AMRA Financial Core & Ledger
+	// AMRA Financial Core, Ledger & Sovereign Treasury Bridge
 	mux.HandleFunc("GET /api/v1/amra/plans", handler.amraHandler.ListPlansHandler)
 	mux.HandleFunc("POST /api/v1/amra/checkout", handler.amraHandler.CheckoutHandler)
 	mux.HandleFunc("POST /api/v1/amra/webhook/{provider}", handler.amraHandler.WebhookHandler)
@@ -191,6 +191,8 @@ func NewRouter(handler *Handler) *Router {
 	mux.HandleFunc("GET /api/v1/amra/gcloud/status", handler.amraHandler.GCloudStatusHandler)
 	mux.HandleFunc("GET /api/v1/amra/gcloud/billing", handler.amraHandler.GCloudBillingHandler)
 	mux.HandleFunc("POST /api/v1/amra/gcloud/sync-ledger", handler.amraHandler.GCloudSyncLedgerHandler)
+	mux.HandleFunc("POST /api/v1/treasury/events", handler.TreasuryEventHandler)
+	mux.HandleFunc("GET /api/v1/treasury/status", handler.TreasuryStatusHandler)
 
 	// Esoteric Foundations & Philosophical Texts (BoltDB Served)
 	mux.HandleFunc("GET /api/v1/esoteric", handler.GetEsotericCatalogHandler)
