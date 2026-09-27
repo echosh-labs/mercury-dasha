@@ -19,8 +19,6 @@ describe("Mercury Dasha Frontend Suite", () => {
     const foundationsDirPath = path.join(outDir, "foundations", "index.html");
     const ephemerisHtmlPath = path.join(outDir, "ephemeris.html");
     const ephemerisDirPath = path.join(outDir, "ephemeris", "index.html");
-    const axisMundiHtmlPath = path.join(outDir, "axis-mundi.html");
-    const axisMundiDirPath = path.join(outDir, "axis-mundi", "index.html");
 
     assert.ok(fs.existsSync(indexPath), "out/index.html must exist after next build");
     assert.ok(fs.existsSync(notFoundPath), "out/404.html must exist after next build");
@@ -35,10 +33,6 @@ describe("Mercury Dasha Frontend Suite", () => {
     assert.ok(
       fs.existsSync(ephemerisHtmlPath) || fs.existsSync(ephemerisDirPath),
       "Dedicated ephemeris route static artifact (out/ephemeris.html or out/ephemeris/index.html) must exist"
-    );
-    assert.ok(
-      fs.existsSync(axisMundiHtmlPath) || fs.existsSync(axisMundiDirPath),
-      "Dedicated axis-mundi route static artifact (out/axis-mundi.html or out/axis-mundi/index.html) must exist"
     );
   });
 

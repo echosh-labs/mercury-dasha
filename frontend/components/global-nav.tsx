@@ -19,6 +19,7 @@ import {
   Layers,
   Sparkles
 } from "lucide-react";
+import AxisMundiTriageDrawer from "./axis-mundi-triage-drawer";
 
 interface NavItem {
   name: string;
@@ -32,7 +33,6 @@ const OBSERVATORY_LINKS: NavItem[] = [
   { name: "Observatory Hub", href: "/", icon: Compass, description: "Calculators, Alchemy, Media & Console" },
   { name: "24h Planetary Alignment", href: "/alignment", icon: Clock, description: "Topocentric Chaldean matrix & hourly metals" },
   { name: "Daily Ephemeris Chart", href: "/ephemeris", icon: Sun, description: "Day lord, solar anchors & 24h planetary hours" },
-  { name: "Axis Mundi Ingestion", href: "/axis-mundi", icon: Radio, description: "Real-time Sovereign Observer workspace feed" },
 ];
 
 const SANCTUARY_LINKS: NavItem[] = [
@@ -46,6 +46,7 @@ export default function GlobalNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [observatoryDropdown, setObservatoryDropdown] = useState<boolean>(false);
   const [sanctuaryDropdown, setSanctuaryDropdown] = useState<boolean>(false);
+  const [triageDrawerOpen, setTriageDrawerOpen] = useState<boolean>(false);
   const [axisStatus, setAxisStatus] = useState<{ isLive: boolean; count: number }>({ isLive: false, count: 0 });
 
   // Close menus on route change
@@ -78,11 +79,11 @@ export default function GlobalNav() {
 
   const isObservatoryActive = pathname === "/" || pathname.startsWith("/alignment") || pathname.startsWith("/ephemeris");
   const isSanctuaryActive = pathname.startsWith("/characters") || pathname.startsWith("/foundations") || pathname.startsWith("/studio");
-  const isAxisMundiActive = pathname.startsWith("/axis-mundi");
   const isTreasuryActive = pathname.startsWith("/treasury");
 
   return (
-    <header className="border-b border-slate-800 bg-[#0c1220]/90 backdrop-blur-md sticky top-0 z-50">
+    <>
+      <header className="border-b border-slate-800 bg-[#0c1220]/90 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand & Identity */}
         <div className="flex items-center space-x-3">
@@ -206,23 +207,20 @@ export default function GlobalNav() {
             )}
           </div>
 
-          {/* Dedicated Axis Mundi Route Link */}
-          <Link
-            href="/axis-mundi/"
-            className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition ${
-              isAxisMundiActive
-                ? "bg-cyan-950/60 text-cyan-300 font-semibold border border-cyan-800/70"
-                : "text-slate-300 hover:text-cyan-300 hover:bg-slate-800/50"
-            }`}
+          {/* Ambient Axis Mundi Inbound Drawer Trigger */}
+          <button
+            onClick={() => setTriageDrawerOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-lg transition text-slate-300 hover:text-cyan-300 hover:bg-slate-800/50"
+            title="Open Axis Mundi Inbound Triage Drawer"
           >
             <Radio className={`w-3.5 h-3.5 ${axisStatus.isLive ? "text-emerald-400 animate-pulse" : "text-cyan-400"}`} />
             <span>Axis Mundi</span>
             {axisStatus.count > 0 && (
-              <span className="text-[10px] bg-cyan-900/60 text-cyan-300 px-1.5 py-0.2 rounded-full border border-cyan-700/60">
+              <span className="text-[10px] bg-cyan-900/60 text-cyan-300 px-1.5 py-0.2 rounded-full border border-cyan-700/60 font-semibold">
                 {axisStatus.count}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* AMRA Treasury Route Link */}
           <Link
@@ -241,19 +239,15 @@ export default function GlobalNav() {
         {/* Right Status Utilities & Controls */}
         <div className="flex items-center space-x-2 sm:space-x-3 text-xs font-mono">
           {/* Axis Mundi Ingestion Pill */}
-          <Link
-            href="/axis-mundi/"
-            title="Open Axis Mundi & Sovereign Observer Ingestion Route"
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border transition group ${
-              isAxisMundiActive
-                ? "bg-cyan-950/70 border-cyan-700 text-cyan-300"
-                : "bg-slate-900 border-slate-800 hover:border-cyan-500/50"
-            }`}
+          <button
+            onClick={() => setTriageDrawerOpen(true)}
+            title="Open Axis Mundi Inbound Triage Drawer"
+            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border transition group bg-slate-900 border-slate-800 hover:border-cyan-500/50 cursor-pointer"
           >
             <Radio className={`w-3 h-3 ${axisStatus.isLive ? "text-emerald-400 animate-pulse" : "text-cyan-400"}`} />
             <span className="hidden sm:inline text-slate-400 group-hover:text-slate-200">Axis Mundi:</span>
             <span className="text-cyan-300 font-semibold">{axisStatus.count} items</span>
-          </Link>
+          </button>
 
           {/* Runtime Target Pill */}
           <span className="hidden xl:inline-block px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 border border-slate-800">
@@ -337,17 +331,21 @@ export default function GlobalNav() {
             <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider block px-2 mb-1">
               Workspace &amp; Ingestion Layer
             </span>
-            <Link
-              href="/axis-mundi/"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-mono transition ${
-                isAxisMundiActive
-                  ? "bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-800"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
-              }`}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setTriageDrawerOpen(true);
+              }}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono transition text-slate-300 hover:bg-slate-800 hover:text-white"
             >
-              <Radio className="w-4 h-4 text-cyan-400" />
-              <span>Axis Mundi Workspace ({axisStatus.count})</span>
-            </Link>
+              <div className="flex items-center space-x-2">
+                <Radio className={`w-4 h-4 ${axisStatus.isLive ? "text-emerald-400 animate-pulse" : "text-cyan-400"}`} />
+                <span>Axis Mundi Triage</span>
+              </div>
+              <span className="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded-full font-semibold">
+                {axisStatus.count} items
+              </span>
+            </button>
           </div>
 
           <div className="space-y-1 pt-2 border-t border-slate-800/80">
@@ -382,5 +380,10 @@ export default function GlobalNav() {
         </div>
       )}
     </header>
+    <AxisMundiTriageDrawer
+      isOpen={triageDrawerOpen}
+      onClose={() => setTriageDrawerOpen(false)}
+    />
+  </>
   );
 }

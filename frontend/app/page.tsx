@@ -24,8 +24,6 @@ import AlchemicalLab from "@/components/alchemical-lab";
 import AgenticConsole from "@/components/agentic-console";
 import AudioStudio from "@/components/audio-studio";
 import UnifiedMediaPortal from "@/components/unified-media-portal";
-import AxisMundiWorkspace from "@/components/axis-mundi-workspace";
-import { Radio } from "lucide-react";
 
 interface TelemetryData {
   service: string;
@@ -37,19 +35,8 @@ interface TelemetryData {
 }
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"observatory" | "alchemy" | "dropbox" | "audio" | "media" | "axis-mundi" | "console">("observatory");
+  const [activeTab, setActiveTab] = useState<"observatory" | "alchemy" | "dropbox" | "audio" | "media" | "console">("observatory");
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null);
-
-  // Read URL query parameter for tab selection (e.g., /?tab=axis-mundi)
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get("tab");
-      if (tabParam && ["observatory", "alchemy", "dropbox", "audio", "media", "axis-mundi", "console"].includes(tabParam)) {
-        setActiveTab(tabParam as any);
-      }
-    }
-  }, []);
 
   return (
     <div className="space-y-6">
@@ -146,17 +133,6 @@ export default function Home() {
           <span>Visual Chronicle</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab("axis-mundi")}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg transition ${
-            activeTab === "axis-mundi"
-              ? "bg-slate-800 text-cyan-400 border border-slate-700 font-semibold"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-          }`}
-        >
-          <Radio className="w-4 h-4 text-cyan-400" />
-          <span>Axis Mundi Ingestion</span>
-        </button>
 
         <button
           onClick={() => setActiveTab("console")}
@@ -187,7 +163,6 @@ export default function Home() {
       {activeTab === "dropbox" && <DropboxSovereignStorehouse />}
       {activeTab === "audio" && <AudioStudio />}
       {activeTab === "media" && <UnifiedMediaPortal />}
-      {activeTab === "axis-mundi" && <AxisMundiWorkspace />}
       {activeTab === "console" && <AgenticConsole />}
     </div>
   );

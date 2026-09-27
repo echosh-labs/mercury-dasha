@@ -12,6 +12,8 @@ import { YouTubeStudioProvider } from "@/lib/youtube-context";
 import { ToastProvider } from "@/lib/toast-context";
 import { TemporalProvider } from "@/lib/temporal-context";
 import YouTubeStudioDock from "@/components/youtube-studio-dock";
+import AxisMundiToastListener from "@/components/axis-mundi-toast-listener";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -30,6 +32,19 @@ export default function RootLayout({
             </main>
             <YouTubeStudioDock />
             <GlobalFooter />
+            <AxisMundiToastListener />
+            <Toaster
+              position="bottom-right"
+              theme="dark"
+              closeButton
+              toastOptions={{
+                style: {
+                  background: "#0c1322",
+                  border: "1px solid #1e293b",
+                  color: "#f8fafc",
+                },
+              }}
+            />
           </YouTubeStudioProvider>
         </TemporalProvider>
       </ToastProvider>
