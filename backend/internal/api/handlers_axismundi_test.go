@@ -151,3 +151,63 @@ func TestAxisMundiEventHandlerAndFeed(t *testing.T) {
 		t.Errorf("Expected item type keep, got %s", keepFeed.Items[0].Type)
 	}
 }
+
+func TestAxisMundiDiscoveriesHandler(t *testing.T) {
+	_, router, cleanup := setupTestAxisMundiHandler(t)
+	defer cleanup()
+
+	// Post batch of discoveries discovered by Sovereign Observer
+	payload := DiscoveryRequest{
+		Source: "sovereign_observer",
+		Discoveries: []axismundi.WorkspaceItem{
+			{
+				ID:      "gmail/thread-sovereign-1",
+				Type:    axismundi.TypeGmail,
+				Title:   "Transmission: Ephemeris Alignment",
+				Snippet: "Planetary hour sequence verification",
+			},
+			{
+				ID:      "sheets/ledger-sovereign-1",
+				Type:    axismundi.TypeSheet,
+				Title:   "Vimshottari Planetary Matrix",
+				Snippet: "Cycle durations and sub-periods",
+			},
+		},
+	}
+	body, _ := json.Marshal(payload)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/axis-mundi/discoveries", bytes.NewReader(body))
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected 200 OK, got %d: %s", rr.Code, rr.Body.String())
+	}
+
+	var resp map[string]any
+	if err := json.NewDecoder(rr.Body).Decode(&resp); err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
+
+	if resp["success"] != true {
+		t.Errorf("Expected success true, got %v", resp["success"])
+	}
+	if resp["received"].(float64) != 2 {
+		t.Errorf("Expected 2 received, got %v", resp["received"])
+	}
+	if resp["new_alerts"].(float64) != 2 {
+		t.Errorf("Expected 2 new alerts, got %v", resp["new_alerts"])
+	}
+
+	// Verify items now present in feed
+	feedReq := httptest.NewRequest(http.MethodGet, "/api/v1/axis-mundi/feed", nil)
+	feedRR := httptest.NewRecorder()
+	router.ServeHTTP(feedRR, feedReq)
+
+	var feed axismundi.WorkspaceFeed
+	_ = json.NewDecoder(feedRR.Body).Decode(&feed)
+	if feed.Total != 2 {
+		t.Errorf("Expected feed total 2, got %d", feed.Total)
+	}
+}
+

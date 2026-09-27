@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"time"
 
@@ -75,6 +76,98 @@ func (h *Handler) AxisMundiSyncHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// DiscoveryRequest represents a batch of discoveries submitted by Sovereign Observer.
+type DiscoveryRequest struct {
+	Source      string                    `json:"source"`
+	Discoveries []axismundi.WorkspaceItem `json:"discoveries"`
+	Items       []axismundi.WorkspaceItem `json:"items"`
+}
+
+// AxisMundiDiscoveriesHandler receives newly registered files, emails, or keep notes discovered by Sovereign Observer.
+func (h *Handler) AxisMundiDiscoveriesHandler(w http.ResponseWriter, r *http.Request) {
+	if h.axisMundi == nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"error": "Axis Mundi listener subsystem is not initialized",
+		})
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]any{"error": "failed to read body: " + err.Error()})
+		return
+	}
+
+	var items []axismundi.WorkspaceItem
+	source := "sovereign_observer"
+
+	// 1. Try decoding as DiscoveryRequest object
+	var discReq DiscoveryRequest
+	if err := json.Unmarshal(bodyBytes, &discReq); err == nil && (len(discReq.Discoveries) > 0 || len(discReq.Items) > 0) {
+		if discReq.Source != "" {
+			source = discReq.Source
+		}
+		items = append(items, discReq.Discoveries...)
+		items = append(items, discReq.Items...)
+	} else {
+		// 2. Try decoding as array of WorkspaceItem
+		var rawList []axismundi.WorkspaceItem
+		if err := json.Unmarshal(bodyBytes, &rawList); err == nil && len(rawList) > 0 {
+			items = rawList
+		} else {
+			// 3. Try decoding as single WorkspaceItem
+			var singleItem axismundi.WorkspaceItem
+			if err := json.Unmarshal(bodyBytes, &singleItem); err == nil && singleItem.ID != "" {
+				items = []axismundi.WorkspaceItem{singleItem}
+			} else {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(map[string]any{"error": "invalid discovery payload: expected object or array with item id and title"})
+				return
+			}
+		}
+	}
+
+	// Filter valid items
+	var validItems []axismundi.WorkspaceItem
+	for _, it := range items {
+		if it.ID != "" && it.Title != "" {
+			if it.Source == "" {
+				it.Source = source
+			}
+			validItems = append(validItems, it)
+		}
+	}
+
+	if len(validItems) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]any{"error": "no valid items in discovery payload"})
+		return
+	}
+
+	newAlerts := h.axisMundi.ProcessItems(validItems)
+
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]any{
+		"success":    true,
+		"source":     source,
+		"received":   len(validItems),
+		"new_alerts": len(newAlerts),
+		"alerts":     newAlerts,
+		"status":     h.axisMundi.GetStatus(),
+	})
+}
+
 // AxisMundiEventHandler receives pushed workspace events (e.g. from Axis Mundi webhooks or agents).
 func (h *Handler) AxisMundiEventHandler(w http.ResponseWriter, r *http.Request) {
 	if h.axisMundi == nil {
@@ -91,27 +184,42 @@ func (h *Handler) AxisMundiEventHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]any{"error": "failed to read body: " + err.Error()})
+		return
+	}
+
+	// Try single item first for backward compatibility
 	var item axismundi.WorkspaceItem
-	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
+	if err := json.Unmarshal(bodyBytes, &item); err == nil && item.ID != "" && item.Title != "" {
+		alert, isNew := h.axisMundi.IngestEvent(item)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]any{"error": "invalid payload: " + err.Error()})
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"received": true,
+			"is_new":   isNew,
+			"alert":    alert,
+		})
 		return
 	}
 
-	if item.ID == "" || item.Title == "" {
+	// Fallback to discovery request
+	var discReq DiscoveryRequest
+	if err := json.Unmarshal(bodyBytes, &discReq); err == nil && (len(discReq.Discoveries) > 0 || len(discReq.Items) > 0) {
+		items := append(discReq.Discoveries, discReq.Items...)
+		newAlerts := h.axisMundi.ProcessItems(items)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]any{"error": "item id and title are required"})
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"received":   true,
+			"new_alerts": len(newAlerts),
+			"alerts":     newAlerts,
+		})
 		return
 	}
-
-	alert, isNew := h.axisMundi.IngestEvent(item)
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(map[string]any{
-		"received": true,
-		"is_new":   isNew,
-		"alert":    alert,
-	})
+	w.WriteHeader(http.StatusBadRequest)
+	_ = json.NewEncoder(w).Encode(map[string]any{"error": "item id and title are required"})
 }
