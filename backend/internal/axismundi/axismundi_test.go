@@ -97,3 +97,114 @@ func TestListener_ProcessItemsAndAlerts(t *testing.T) {
 		t.Errorf("Unexpected feed counts: %+v", feed.Status.Counts)
 	}
 }
+
+func TestClient_FetchRegistryMCP(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/mcp" {
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"jsonrpc": "2.0",
+				"id":      1,
+				"result": map[string]any{
+					"resources": []map[string]any{
+						{
+							"uri":         "keep://notes/123",
+							"name":        "Hermetic Corpus Note",
+							"description": "[Execute] Alchemy guidelines",
+							"mimeType":    "text/plain",
+						},
+						{
+							"uri":         "docs://documents/doc456",
+							"name":        "Foundations Whitepaper",
+							"description": "[Active] Quantum topology",
+							"mimeType":    "text/plain",
+						},
+					},
+				},
+			})
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	client := NewClient(srv.URL, "")
+	items, err := client.FetchRegistry(context.Background())
+	if err != nil {
+		t.Fatalf("FetchRegistry via MCP failed: %v", err)
+	}
+
+	if len(items) != 2 {
+		t.Fatalf("Expected 2 items, got %d", len(items))
+	}
+
+	if items[0].Type != TypeKeep || items[0].Status != "Execute" || items[0].Source != "mcp" {
+		t.Errorf("Unexpected keep item mapping: %+v", items[0])
+	}
+	if items[1].Type != TypeDoc || items[1].Status != "Active" || items[1].Source != "mcp" {
+		t.Errorf("Unexpected doc item mapping: %+v", items[1])
+	}
+}
+
+func TestClient_ReadResourceAndCallTool(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/mcp" {
+			var rpcReq struct {
+				Method string         `json:"method"`
+				Params map[string]any `json:"params"`
+			}
+			_ = json.NewDecoder(r.Body).Decode(&rpcReq)
+
+			w.Header().Set("Content-Type", "application/json")
+			switch rpcReq.Method {
+			case "resources/read":
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"jsonrpc": "2.0",
+					"id":      1,
+					"result": map[string]any{
+						"contents": []map[string]any{
+							{
+								"uri":      rpcReq.Params["uri"],
+								"mimeType": "text/plain",
+								"text":     "# Note Title\n\nContent here.",
+							},
+						},
+					},
+				})
+			case "tools/call":
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"jsonrpc": "2.0",
+					"id":      1,
+					"result": map[string]any{
+						"content": []map[string]any{
+							{"type": "text", "text": `{"ok":true}`},
+						},
+					},
+				})
+			default:
+				http.Error(w, "unknown method", http.StatusBadRequest)
+			}
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	client := NewClient(srv.URL, "")
+	text, err := client.ReadResource(context.Background(), "keep://notes/123")
+	if err != nil {
+		t.Fatalf("ReadResource failed: %v", err)
+	}
+	if text != "# Note Title\n\nContent here." {
+		t.Errorf("unexpected content: %q", text)
+	}
+
+	toolRes, err := client.CallTool(context.Background(), "set_status", map[string]any{"id": "doc456", "status": "Complete"})
+	if err != nil {
+		t.Fatalf("CallTool failed: %v", err)
+	}
+	if toolRes != `{"ok":true}` {
+		t.Errorf("unexpected tool result: %s", toolRes)
+	}
+}
+
