@@ -1,0 +1,43 @@
+name: Repository Maintenance & Integrity
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  maintenance:
+    name: Codebase Verification & Maintenance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: backend/go.sum
+
+      - name: Verify Backend Integrity & Tests
+        run: |
+          cd backend
+          go test -v ./...
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify Frontend Integrity & Tests
+        run: |
+          cd frontend
+          npm install
+          npm run typecheck
+          npm test
