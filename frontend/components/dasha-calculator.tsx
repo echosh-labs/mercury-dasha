@@ -74,7 +74,17 @@ interface ActiveSnapshot {
 
 export type DashaProfile = SovereignProfile;
 
-export default function DashaCalculator() {
+export interface DashaCalculatorProps {
+  activeProfileId?: string;
+  onProfileChange?: (id: string) => void;
+  onOpenSegment?: (segment: "dasha" | "hora" | "ephemeris" | "characters") => void;
+}
+
+export default function DashaCalculator({
+  activeProfileId: propProfileId,
+  onProfileChange,
+  onOpenSegment
+}: DashaCalculatorProps = {}) {
   const [mode, setMode] = useState<"ephemeris" | "nakshatra">("ephemeris");
   const [profileName, setProfileName] = useState<string>("Sovereign Genesis");
   const [birthDate, setBirthDate] = useState<string>("1992-06-15");
@@ -177,6 +187,10 @@ export default function DashaCalculator() {
             setExpandedMaha({ [activeIdx]: true });
           }
         }
+
+        if (onProfileChange) {
+          onProfileChange(id);
+        }
       }
     } catch (err) {
       console.error("Failed to load profile:", err);
@@ -184,6 +198,12 @@ export default function DashaCalculator() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (propProfileId && propProfileId !== selectedSaved) {
+      handleLoadProfile(propProfileId);
+    }
+  }, [propProfileId]);
 
   const handleCalculate = async () => {
     setLoading(true);
@@ -480,14 +500,25 @@ export default function DashaCalculator() {
               <RotateCcw className="w-3 h-3" />
               <span>New</span>
             </button>
-            <Link
-              href="/characters/"
-              title="Open full Character Sanctuary management"
-              className="bg-purple-950/70 hover:bg-purple-900/80 text-purple-300 hover:text-white text-xs px-2.5 py-1.5 rounded-lg border border-purple-700/60 transition flex items-center space-x-1 font-mono"
-            >
-              <Users className="w-3 h-3 text-purple-400" />
-              <span>Sanctuary</span>
-            </Link>
+            {onOpenSegment ? (
+              <button
+                onClick={() => onOpenSegment("characters")}
+                title="Open full Character Sanctuary management"
+                className="bg-purple-950/70 hover:bg-purple-900/80 text-purple-300 hover:text-white text-xs px-2.5 py-1.5 rounded-lg border border-purple-700/60 transition flex items-center space-x-1 font-mono cursor-pointer"
+              >
+                <Users className="w-3 h-3 text-purple-400" />
+                <span>Sanctuary</span>
+              </button>
+            ) : (
+              <Link
+                href="/characters/"
+                title="Open full Character Sanctuary management"
+                className="bg-purple-950/70 hover:bg-purple-900/80 text-purple-300 hover:text-white text-xs px-2.5 py-1.5 rounded-lg border border-purple-700/60 transition flex items-center space-x-1 font-mono"
+              >
+                <Users className="w-3 h-3 text-purple-400" />
+                <span>Sanctuary</span>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -1062,19 +1093,35 @@ export default function DashaCalculator() {
 
             {/* Symbiotic Alchemical Hora Alignment Link */}
             <div className="pt-2">
-              <Link
-                href={profile?.id ? `/alignment/?profile_id=${encodeURIComponent(profile.id)}` : "/alignment/"}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-purple-950/60 via-slate-900 to-cyan-950/60 border border-purple-800/40 hover:border-purple-600 text-xs font-mono text-purple-200 transition group cursor-pointer shadow-sm"
-              >
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:scale-110 transition-transform" />
-                  <span>Symbiotic Daily Hora Alignment</span>
-                </div>
-                <span className="text-[11px] text-cyan-400 group-hover:translate-x-0.5 transition-transform flex items-center space-x-1">
-                  <span>View 24h</span>
-                  <ChevronRight className="w-3 h-3" />
-                </span>
-              </Link>
+              {onOpenSegment ? (
+                <button
+                  onClick={() => onOpenSegment("hora")}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-purple-950/60 via-slate-900 to-cyan-950/60 border border-purple-800/40 hover:border-purple-600 text-xs font-mono text-purple-200 transition group cursor-pointer shadow-sm text-left"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:scale-110 transition-transform" />
+                    <span>Symbiotic Daily Hora Alignment</span>
+                  </div>
+                  <span className="text-[11px] text-cyan-400 group-hover:translate-x-0.5 transition-transform flex items-center space-x-1">
+                    <span>View 24h</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </span>
+                </button>
+              ) : (
+                <Link
+                  href={profile?.id ? `/alignment/?profile_id=${encodeURIComponent(profile.id)}` : "/alignment/"}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-purple-950/60 via-slate-900 to-cyan-950/60 border border-purple-800/40 hover:border-purple-600 text-xs font-mono text-purple-200 transition group cursor-pointer shadow-sm"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400 group-hover:scale-110 transition-transform" />
+                    <span>Symbiotic Daily Hora Alignment</span>
+                  </div>
+                  <span className="text-[11px] text-cyan-400 group-hover:translate-x-0.5 transition-transform flex items-center space-x-1">
+                    <span>View 24h</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </span>
+                </Link>
+              )}
             </div>
           </div>
 

@@ -19,6 +19,16 @@ describe("Mercury Dasha Frontend Suite", () => {
     const foundationsDirPath = path.join(outDir, "foundations", "index.html");
     const ephemerisHtmlPath = path.join(outDir, "ephemeris.html");
     const ephemerisDirPath = path.join(outDir, "ephemeris", "index.html");
+    const alchemyHtmlPath = path.join(outDir, "alchemy.html");
+    const alchemyDirPath = path.join(outDir, "alchemy", "index.html");
+    const storehouseHtmlPath = path.join(outDir, "storehouse.html");
+    const storehouseDirPath = path.join(outDir, "storehouse", "index.html");
+    const consoleHtmlPath = path.join(outDir, "console.html");
+    const consoleDirPath = path.join(outDir, "console", "index.html");
+    const alignmentHtmlPath = path.join(outDir, "alignment.html");
+    const alignmentDirPath = path.join(outDir, "alignment", "index.html");
+    const charactersHtmlPath = path.join(outDir, "characters.html");
+    const charactersDirPath = path.join(outDir, "characters", "index.html");
 
     assert.ok(fs.existsSync(indexPath), "out/index.html must exist after next build");
     assert.ok(fs.existsSync(notFoundPath), "out/404.html must exist after next build");
@@ -33,6 +43,26 @@ describe("Mercury Dasha Frontend Suite", () => {
     assert.ok(
       fs.existsSync(ephemerisHtmlPath) || fs.existsSync(ephemerisDirPath),
       "Dedicated ephemeris route static artifact (out/ephemeris.html or out/ephemeris/index.html) must exist"
+    );
+    assert.ok(
+      fs.existsSync(alchemyHtmlPath) || fs.existsSync(alchemyDirPath),
+      "Dedicated alchemy route static artifact (out/alchemy.html or out/alchemy/index.html) must exist"
+    );
+    assert.ok(
+      fs.existsSync(storehouseHtmlPath) || fs.existsSync(storehouseDirPath),
+      "Dedicated storehouse route static artifact (out/storehouse.html or out/storehouse/index.html) must exist"
+    );
+    assert.ok(
+      fs.existsSync(consoleHtmlPath) || fs.existsSync(consoleDirPath),
+      "Dedicated console route static artifact (out/console.html or out/console/index.html) must exist"
+    );
+    assert.ok(
+      fs.existsSync(alignmentHtmlPath) || fs.existsSync(alignmentDirPath),
+      "Dedicated alignment route static artifact (out/alignment.html or out/alignment/index.html) must exist"
+    );
+    assert.ok(
+      fs.existsSync(charactersHtmlPath) || fs.existsSync(charactersDirPath),
+      "Dedicated characters route static artifact (out/characters.html or out/characters/index.html) must exist"
     );
   });
 
