@@ -185,11 +185,12 @@ func main() {
 	})
 
 	server := &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      rootMux,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 60 * time.Second,
-		IdleTimeout:  120 * time.Second,
+		Addr:              ":" + cfg.Port,
+		Handler:           rootMux,
+		ReadTimeout:       30 * time.Second,
+		ReadHeaderTimeout: 15 * time.Second,
+		WriteTimeout:      0, // Disabled to support indefinite SSE streams (e.g. /api/v1/chrono/pulse, MCP)
+		IdleTimeout:       120 * time.Second,
 	}
 
 	// 5. Graceful Shutdown & Remote Restart Listener

@@ -329,6 +329,10 @@ func (m *Metronome) SSEHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Disable write deadline for persistent SSE streaming
+	rc := http.NewResponseController(w)
+	_ = rc.SetWriteDeadline(time.Time{})
+
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
@@ -366,6 +370,9 @@ func (m *Metronome) SSEHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintf(w, "event: pulse\ndata: %s\n\n", string(initData))
 	flusher.Flush()
 
+	heartbeat := time.NewTicker(15 * time.Second)
+	defer heartbeat.Stop()
+
 	notify := r.Context().Done()
 	for {
 		select {
@@ -373,11 +380,18 @@ func (m *Metronome) SSEHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		case <-m.stopChan:
 			return
+		case <-heartbeat.C:
+			if _, err := fmt.Fprintf(w, ": ping\n\n"); err != nil {
+				return
+			}
+			flusher.Flush()
 		case msg, ok := <-clientChan:
 			if !ok {
 				return
 			}
-			_, _ = w.Write(msg)
+			if _, err := w.Write(msg); err != nil {
+				return
+			}
 			flusher.Flush()
 		}
 	}
